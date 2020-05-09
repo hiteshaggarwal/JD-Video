@@ -1,0 +1,132 @@
+/* Replace .jd with prefix */
+
+.jd-video-wrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    border-radius: 5px;
+}
+
+.jd-video-wrapper::before {
+    display: block;
+    content: "";
+}
+
+.jd-video-wrapper.jd-video-size-16by9::before {
+    padding-top: 56.25%;
+}
+
+.jd-video-wrapper.jd-video-size-21by9::before {
+    padding-top: 42.857143%;
+}
+
+.jd-video-wrapper.jd-video-size-4by3::before {
+    padding-top: 75%;
+}
+
+.jd-video-wrapper.jd-video-size-1by1::before {
+    padding-top: 100%;
+}
+
+.jd-video-loading {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    right: 0;
+    top: 0;
+    z-index: 2;
+    display: none;
+}
+
+.jd-video-play {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.jd-video-play span.jd-video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.jd-video-play video {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 0;
+}
+
+.jd-video-play .jd-video-thumbnail {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+.jd-video-thumbnail img {
+    width: 100%;
+}
+
+.jd-video-play .jd-video-playicon {
+    z-index: 2;
+}
+
+.jd-video-player {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1;
+    background: #000;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.jd-video-player iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.jd-video-playicon {
+    position: absolute;
+    font-size: 100px;
+    font-family: Helvetica, Arial, sans-serif;
+    display: block;
+    width: 150px;
+    height: 150px;
+    margin-left: -75px;
+    margin-top: -75px;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    line-height: 150px;
+}
+
+.jd-video-playicon span {
+    display: block;
+}
+
+video {
+    background: #000;
+}
