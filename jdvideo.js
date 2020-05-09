@@ -64,7 +64,7 @@
             thumbnailWrapper.appendChild(overlay);
         }
         thumbnailWrapper.addEventListener('click', function () {
-            loadPlayer.call(_this);
+            loadPlayer.call(_this, true);
         });
         this.thumbnailWrapper = thumbnailWrapper;
 
@@ -87,22 +87,22 @@
 
         // if autoplay is enabled
         if (this.options.autoplay) {
-            loadPlayer.call(_this);
+            loadPlayer.call(_this, true);
         }
     }
 
-    function loadPlayer() {
+    function loadPlayer(_play) {
         this.loading.style.display = 'block';
-        if (this.options.type == 'upload') {
-            __loadUploadVideo.call(this);
+        if (this.options.type == 'html5') {
+            __loadVideo.call(this, _play);
         } else if (this.options.type == 'vimeo') {
-            __loadUploadVimeo.call(this);
+            __loadVimeo.call(this, _play);
         } else if (this.options.type == 'youtube') {
-            __loadUploadYoutube.call(this);
+            __loadYoutube.call(this, _play);
         }
     }
 
-    function __loadUploadVideo() {
+    function __loadVideo(_play) {
         var _this = this;
 
         playerWrapper = document.createElement('div');
@@ -115,17 +115,27 @@
         $video.setAttribute('src', _this.options.src);
         $video.setAttribute('width', '100%');
         $video.setAttribute('height', '100%');
+        $video.setAttribute('allow', 'autoplay');
+
 
         $video.loop = _this.options.loop;
         $video.muted = _this.options.muted;
         $video.controls = _this.options.controls;
+        if (_play) {
+            $video.autoplay = true;
+            $video.muted = true;
+        }
 
         playerWrapper.appendChild($video);
+
         $video.addEventListener('loadeddata', function () {
-            _this.loading.style.display = 'none';
             playerWrapper.style.display = 'block'
             _this.thumbnailWrapper.remove();
-            $video.play();
+            if (!_play) {
+                _this.loading.style.display = 'none';
+            } else {
+                $video.play();
+            }
             if (!_this.options.controls) {
                 _this.wrapper.addEventListener('click', function () {
                     if ($video.paused) {
@@ -136,9 +146,13 @@
                 });
             }
         });
+
+        $video.addEventListener('play', function () {
+            _this.loading.style.display = 'none';
+        });
     }
 
-    function __loadUploadVimeo() {
+    function __loadVimeo(_play) {
         var _this = this;
 
         if (!(typeof window.Vimeo == 'object' && typeof window.Vimeo.Player == 'function')) {
@@ -148,7 +162,7 @@
             var firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
             document.getElementById(tag.id).addEventListener('load', function () {
-                __loadUploadVimeo.call(_this);
+                __loadVimeo.call(_this, _play);
             });
             return;
         }
@@ -163,15 +177,21 @@
         options.loop = _this.options.loop;
         options.muted = _this.options.muted;
         options.controls = _this.options.controls;
+        options.title = false;
+        options.portrait = false;
+        options.byline = false;
 
         options = extendDefaults(options, _this.options.vimeo);
         var $vimeo = new Vimeo.Player(playerWrapper, options);
 
         $vimeo.on('loaded', function () {
-            _this.loading.style.display = 'none';
             playerWrapper.style.display = 'block'
             _this.thumbnailWrapper.remove();
-            $vimeo.play();
+            if (_play) {
+                $vimeo.play();
+            } else {
+                _this.loading.style.display = 'none';
+            }
             if (!_this.options.controls) {
                 _this.wrapper.addEventListener('click', function () {
                     if ($vimeo.getPaused()) {
@@ -182,15 +202,19 @@
                 });
             }
         });
+
+        $vimeo.on('play', function () {
+            _this.loading.style.display = 'none';
+        });
     }
 
-    function __loadUploadYoutube() {
+    function __loadYoutube(_play) {
 
         var _this = this;
 
         if (!(typeof window.YT == 'object' && typeof window.YT.Player == 'function')) {
             window.onYouTubeIframeAPIReady = function () {
-                __loadUploadYoutube.call(_this);
+                __loadYoutube.call(_this, _play);
             };
 
             var tag = document.createElement('script');
@@ -222,21 +246,18 @@
         }
         options.events = {
             onReady: function (event) {
-                _this.loading.style.display = 'none';
                 playerWrapper.style.display = 'block'
                 _this.thumbnailWrapper.remove();
 
-                var embedCode = event.target.getVideoEmbedCode();
-                event.target.playVideo();
-                if (!_this.options.controls) {
-                    _this.wrapper.addEventListener('click', function () {
-                        console.log(event.target);
-                        /* if ($vimeo.getPaused()) {
-                            event.target.playVideo();
-                        } else {
-                            event.target.pauseVideo();
-                        } */
-                    });
+                if (_play) {
+                    event.target.playVideo();
+                } else {
+                    _this.loading.style.display = 'none';
+                }
+            },
+            onStateChange: function (event) {
+                if (event.data === 1) {
+                    _this.loading.style.display = 'none';
                 }
             }
         }
@@ -322,7 +343,7 @@
     function getVideoThumbnail() {
         var _this = this;
 
-        if (this.options.thumbnail == '' && this.options.type == 'upload') {
+        if (this.options.thumbnail === '' && this.options.type == 'html5') {
             var $video = document.createElement('video');
             $video.controls = false;
             $video.src = this.options.src;
@@ -330,7 +351,7 @@
             this.thumbnailWrapper.appendChild($video);
         } else {
             var $thumbnail = this.options.thumbnail;
-            if ($thumbnail == '') {
+            if ($thumbnail === '') {
                 if (this.options.type === 'vimeo') {
                     var _id = getVimeoId(this.options.src);
                     var promise = new Promise(function (resolve, reject) {
@@ -338,6 +359,10 @@
                             callbackName: _this.options.prefix + 'VimeoCallback',
                             onSuccess: function (json) {
                                 resolve(json[0].thumbnail_large);
+                            },
+                            timeout: 2,
+                            onTimeout: function () {
+                                __loadVimeo.call(_this, false);
                             }
                         });
                     });
@@ -347,17 +372,24 @@
                     });
                 }
                 if (this.options.type === 'youtube') {
+                    if ($thumbnail === false) {
+                        __applyThumbnail.call(this, $thumbnail);
+                        return;
+                    }
                     var _id = getYoutubeId(this.options.src);
                     __applyThumbnail.call(this, 'https://i.ytimg.com/vi/' + _id + '/hqdefault.jpg');
                 }
             } else {
                 __applyThumbnail.call(this, $thumbnail);
             }
-
         }
     }
 
     function __applyThumbnail($thumbnail) {
+        if ($thumbnail === false) {
+            loadPlayer.call(this, this.options.autoplay);
+            return;
+        }
         var thumbnail = document.createElement('div');
         var thumbnailImg = document.createElement('img');
         thumbnailImg.src = $thumbnail;

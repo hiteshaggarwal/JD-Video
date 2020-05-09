@@ -11,7 +11,7 @@ new jdVideo(HTMLElement, options);
 | `prefix`    | `string`  | `jd`                   | Class prefix for element.                                    |
 | `type`      | `string`  | `upload`               | Type of video. Example: `upload`, `youtube`, `vimeo`         |
 | `src`       | `string`  | `null`                 | Source of video.<br />Examples:<br />Upload: `file.mp4` <br />Youtube: `youtubeUrl` or `youtubeID`<br />Vimeo: `vimeoUrl` or `vimeoID` |
-| `thumbnail` | `string`  | `null`                 | Thumbnail Image, Automatically featch if no thumbnail selected. Example: `imageurl` |
+| `thumbnail` | `string`  | `null`                 | Thumbnail Image, Automatically featch if no thumbnail selected. Example: `imageurl`<br />If thumbnail is `false` then no thumbnail will be loaded, Direct player will be load. |
 | `overlay`   | `string`  | `null`                 | Overlay color for thumbnail. Example: `rgba(0, 0, 0, 0.2)`   |
 | `size`      | `string`  | `16by9`                | Video size. Example: `16by9`, `21by9`, `4by3`, `1by1`        |
 | `autoplay`  | `boolean` | `false`                | Autoplay video on load.                                      |
