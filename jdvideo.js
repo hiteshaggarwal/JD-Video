@@ -7,8 +7,9 @@
             type: '',
             src: '',
             thumbnail: '',
+            size: '16by9',
             overlay: '',
-            icon: '<i class="im im-play"></i>',
+            icon: '<span>&#8227;</span>',
             autoplay: false,
             loop: false,
             muted: false,
@@ -188,9 +189,10 @@
         var _this = this;
 
         if (!(typeof window.YT == 'object' && typeof window.YT.Player == 'function')) {
-            window.onYouTubeIframeAPIReady(function () {
+            window.onYouTubeIframeAPIReady = function () {
                 __loadUploadYoutube.call(_this);
-            });
+            };
+
             var tag = document.createElement('script');
             tag.id = _this.options.prefix + '-youtube-api';
             tag.src = 'https://www.youtube.com/iframe_api';
@@ -213,9 +215,11 @@
             mute: _this.options.muted ? 1 : 0,
             controls: _this.options.controls ? 1 : 0,
             enablejsapi: 1,
-            rel: 0,
-            origin: 'http://plugins.local'
+            rel: 0
         };
+        if (window.location.hostname != '') {
+            options.playerVars.origin = window.location.hostname;
+        }
         options.events = {
             onReady: function (event) {
                 _this.loading.style.display = 'none';
