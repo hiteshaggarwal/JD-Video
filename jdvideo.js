@@ -310,7 +310,7 @@
             }
         }
 
-        options = extendDefaults(options, _this.options.youtube);
+        options.playerVars = extendDefaults(options.playerVars, _this.options.youtube);
 
         playerWrapper.appendChild($video);
 
