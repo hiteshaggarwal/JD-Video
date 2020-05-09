@@ -92,10 +92,13 @@
         wrapper.appendChild(thumbnailWrapper);
         this.element.appendChild(wrapper);
 
-        var placeholder = document.createElement('div');
-        addClass(placeholder, this.options.prefix + '-video-placeholder');
-        addClass(placeholder, this.options.prefix + '-video-size-' + this.options.size);
-        this.element.appendChild(placeholder);
+        if (_this.options.sticky) {
+            var placeholder = document.createElement('div');
+            addClass(placeholder, this.options.prefix + '-video-placeholder');
+            addClass(placeholder, this.options.prefix + '-video-size-' + this.options.size);
+            placeholder.innerHTML = 'Playing in sticky view.';
+            this.element.appendChild(placeholder);
+        }
 
         // if autoplay is enabled
         if (this.options.autoplay) {

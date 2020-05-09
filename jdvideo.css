@@ -8,7 +8,7 @@
     width: 300px;
     margin: 10px;
     z-index: 9999;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.50);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.20);
 }
 
 .jd-video .jd-video-sticky-close {
@@ -18,12 +18,12 @@
     height: 30px;
     line-height: 30px;
     text-align: center;
-    font-size: 22px;
+    font-size: 15px;
     cursor: pointer;
     display: none;
 }
 
-.jd-video.jd-video-sticky .jd-video-sticky-close {
+.jd-video.jd-video-sticky .jd-video-wrapper:hover .jd-video-sticky-close {
     display: block;
 }
 
@@ -91,6 +91,10 @@
     position: absolute;
     top: 0;
     z-index: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #b3b3b3;
 }
 
 .jd-video.jd-video-sticky .jd-video-placeholder {
@@ -181,6 +185,10 @@
 
 .jd-video-play .jd-video-playicon {
     z-index: 2;
+}
+
+.jd-video-sticky .jd-video-playicon {
+    font-size: 60px;
 }
 
 .jd-video-player {
