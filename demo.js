@@ -89,3 +89,36 @@ new jdVideo(document.getElementById('demo-youtube-1by1'), {
     src: 'https://www.youtube.com/watch?v=5xwaA-fphvc',
     size: '1by1'
 });
+
+
+new jdVideo(document.getElementById('demo-html5-stickey-topleft'), {
+    type: 'html5',
+    thumbnail: 'https://cdn.pixabay.com/photo/2017/01/24/03/53/plant-2004483_960_720.jpg',
+    src: 'https://pixabay.com/videos/download/video-35254_small.mp4?attachment',
+    sticky: true,
+    stickyPosition: 'top-left'
+});
+
+new jdVideo(document.getElementById('demo-html5-stickey-bottomleft'), {
+    type: 'html5',
+    thumbnail: 'https://cdn.pixabay.com/photo/2017/01/24/03/53/plant-2004483_960_720.jpg',
+    src: 'https://pixabay.com/videos/download/video-35254_small.mp4?attachment',
+    sticky: true,
+    stickyPosition: 'bottom-left'
+});
+
+new jdVideo(document.getElementById('demo-html5-stickey-topright'), {
+    type: 'html5',
+    thumbnail: 'https://cdn.pixabay.com/photo/2017/01/24/03/53/plant-2004483_960_720.jpg',
+    src: 'https://pixabay.com/videos/download/video-35254_small.mp4?attachment',
+    sticky: true,
+    stickyPosition: 'top-right'
+});
+
+new jdVideo(document.getElementById('demo-html5-stickey-bottomright'), {
+    type: 'html5',
+    thumbnail: 'https://cdn.pixabay.com/photo/2017/01/24/03/53/plant-2004483_960_720.jpg',
+    src: 'https://pixabay.com/videos/download/video-35254_small.mp4?attachment',
+    sticky: true,
+    stickyPosition: 'bottom-right'
+});

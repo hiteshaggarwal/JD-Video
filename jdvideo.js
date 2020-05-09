@@ -1,5 +1,10 @@
 (function () {
     this.jdVideo = function () {
+        this.videoWidth = 0;
+        this.videoHeight = 0;
+        this.stickyClosed = false;
+        this.sticked = false;
+        this.readyForSticky = false;
 
         // Option defaults
         var defaults = {
@@ -14,6 +19,8 @@
             loop: false,
             muted: false,
             controls: true,
+            sticky: false,
+            stickyPosition: 'bottom-right',
             vimeo: {},
             youtube: {}
         };
@@ -85,9 +92,45 @@
         wrapper.appendChild(thumbnailWrapper);
         this.element.appendChild(wrapper);
 
+        var placeholder = document.createElement('div');
+        addClass(placeholder, this.options.prefix + '-video-placeholder');
+        addClass(placeholder, this.options.prefix + '-video-size-' + this.options.size);
+        this.element.appendChild(placeholder);
+
         // if autoplay is enabled
         if (this.options.autoplay) {
             loadPlayer.call(_this, true);
+        }
+
+        this.videoHeight = this.wrapper.offsetHeight;
+        this.videoWidth = this.wrapper.offsetWidth;
+
+        if (this.options.sticky) {
+            var stickyClose = document.createElement('div');
+            window.addEventListener('scroll', function () {
+                if (_this.stickyClosed || _this.sticked) {
+                    return;
+                }
+                if (!isInView(_this.element) && _this.readyForSticky) {
+                    _this.sticked = true;
+                    addClass(_this.element, _this.options.prefix + '-video-sticky');
+                    addClass(_this.element, _this.options.prefix + '-video-sticky-' + _this.options.stickyPosition);
+                    if (_this.options.stickyPosition == 'bottom-left' || _this.options.stickyPosition == 'bottom-right') {
+                        stickyClose.style.marginBottom = (_this.wrapper.offsetHeight - 20) + 'px';
+                    }
+                } else if (isInView(_this.element)) {
+                    _this.readyForSticky = true;
+                }
+            });
+            addClass(stickyClose, _this.options.prefix + '-video-sticky-close');
+            stickyClose.innerHTML = '<span>&#10005;</span>';
+            wrapper.appendChild(stickyClose);
+            stickyClose.addEventListener('click', function () {
+                _this.stickyClosed = true;
+                removeClass(_this.element, _this.options.prefix + '-video-sticky');
+                removeClass(_this.element, _this.options.prefix + '-video-sticky-' + _this.options.stickyPosition);
+                stickyClose.style.marginBottom = 'auto';
+            });
         }
     }
 
@@ -123,7 +166,9 @@
         $video.controls = _this.options.controls;
         if (_play) {
             $video.autoplay = true;
-            $video.muted = true;
+            if (_this.options.autoplay) {
+                $video.muted = true;
+            }
         }
 
         playerWrapper.appendChild($video);
@@ -291,6 +336,16 @@
         return url.match(regex) ? RegExp.$2 : url;
     }
 
+    function isInView(el) {
+        var rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
     // Method to extend defaults
     function extendDefaults(source, properties) {
         var property;
@@ -313,6 +368,11 @@
         if (el.classList)
             el.classList.add(className)
         else if (!hasClass(el, className)) el.className += " " + className
+    }
+
+    function removeClass(el, className) {
+        if (el.classList) el.classList.remove(className);
+        else el.className = el.className.replace(new RegExp('\\b' + className + '\\b', 'g'), '');
     }
 
     function getJSON(src, options) {
